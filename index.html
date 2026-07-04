@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gold Price Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #17130f;
+    --card: #1f1a14;
+    --gold: #c9a24b;
+    --gold-bright: #e0bc6c;
+    --cream: #f2e9d8;
+    --muted: #8f8471;
+    --line: #3a3126;
+    --tax: #b5533c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(201,162,75,0.07), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(201,162,75,0.05), transparent 40%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: 'Inter', sans-serif;
+    color: var(--cream);
+  }
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 32px 28px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: var(--cream);
+  }
+  label {
+    display: block;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    margin-top: 16px;
+  }
+  label:first-of-type { margin-top: 0; }
+  .input-wrap {
+    position: relative;
+  }
+  .input-wrap span {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  input {
+    width: 100%;
+    background: #14110d;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px 12px 30px;
+    font-size: 15px;
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.15s ease;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  input.pct { padding-left: 14px; }
+  .divider {
+    margin: 26px 0 18px;
+    border: none;
+    border-top: 1px dashed var(--line);
+  }
+  .result {
+    background: #14110d;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+    padding: 5px 0;
+  }
+  .row span:last-child { color: var(--cream); }
+  .row.tax span:last-child { color: var(--tax); }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .total-label {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .total-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--gold-bright);
+  }
+  .footnote {
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="eyebrow">Jewellery Calculator</div>
+  <h1>Gold Price Estimate</h1>
+
+  <label for="rate">Gold rate (per gram)</label>
+  <div class="input-wrap">
+    <span>₹</span>
+    <input type="number" id="rate" inputmode="decimal">
+  </div>
+
+  <label for="making">Making charge</label>
+  <div class="input-wrap">
+    <input type="number" id="making" class="pct" inputmode="decimal">
+    <span style="left:auto; right:14px;">%</span>
+  </div>
+
+  <label for="grams">Weight</label>
+  <div class="input-wrap">
+    <input type="number" id="grams" class="pct" inputmode="decimal">
+    <span style="left:auto; right:14px;">g</span>
+  </div>
+
+  <hr class="divider">
+
+  <div class="result">
+    <div class="row">
+      <span>Gold value</span>
+      <span id="goldValue">₹0.00</span>
+    </div>
+    <div class="row">
+      <span>Making charge</span>
+      <span id="makingValue">₹0.00</span>
+    </div>
+    <div class="row tax">
+      <span>GST (3%)</span>
+      <span id="taxValue">₹0.00</span>
+    </div>
+    <div class="total-row">
+      <span class="total-label">Total</span>
+      <span class="total-value" id="totalValue">₹0.00</span>
+    </div>
+  </div>
+
+  <div class="footnote">Updates live as you type</div>
+</div>
+
+<script>
+  const rateInput = document.getElementById('rate');
+  const makingInput = document.getElementById('making');
+  const gramsInput = document.getElementById('grams');
+
+  const goldValueEl = document.getElementById('goldValue');
+  const makingValueEl = document.getElementById('makingValue');
+  const taxValueEl = document.getElementById('taxValue');
+  const totalValueEl = document.getElementById('totalValue');
+
+  function formatRupee(num) {
+    return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calculate() {
+    const rate = parseFloat(rateInput.value) || 0;
+    const makingPct = parseFloat(makingInput.value) || 0;
+    const grams = parseFloat(gramsInput.value) || 0;
+
+    const goldValue = rate * grams;
+    const makingCharge = (makingPct / 100) * goldValue;
+    const subtotal = goldValue + makingCharge;
+    const tax = 0.03 * subtotal;
+    const total = subtotal + tax;
+
+    goldValueEl.textContent = formatRupee(goldValue);
+    makingValueEl.textContent = formatRupee(makingCharge);
+    taxValueEl.textContent = formatRupee(tax);
+    totalValueEl.textContent = formatRupee(total);
+  }
+
+  [rateInput, makingInput, gramsInput].forEach(el => {
+    el.addEventListener('input', calculate);
+  });
+
+  calculate();
+</script>
+
+</body>
+</html>
