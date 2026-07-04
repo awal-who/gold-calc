@@ -252,11 +252,6 @@
         }
       }
     });
-    el.addEventListener('focus', () => {
-      setTimeout(() => {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 300);
-    });
   });
 
   document.getElementById('clearBtn').addEventListener('click', () => {
