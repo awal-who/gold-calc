@@ -1,12 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Gold Price Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#17130f">
 <style>
   :root {
     --bg: #17130f;
@@ -19,17 +22,21 @@
     --tax: #b5533c;
   }
   * { box-sizing: border-box; }
+  html {
+    height: 100%;
+  }
   body {
     margin: 0;
-    min-height: 100vh;
+    min-height: 100%;
     background: var(--bg);
     background-image:
       radial-gradient(circle at 15% 10%, rgba(201,162,75,0.07), transparent 40%),
       radial-gradient(circle at 85% 90%, rgba(201,162,75,0.05), transparent 40%);
+    background-attachment: fixed;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 24px;
+    padding: 28px 20px 60px;
     font-family: 'Inter', sans-serif;
     color: var(--cream);
   }
@@ -89,8 +96,8 @@
     background: #14110d;
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 12px 14px 12px 30px;
-    font-size: 15px;
+    padding: 14px 14px 14px 30px;
+    font-size: 16px;
     color: var(--cream);
     font-family: 'Inter', sans-serif;
     transition: border-color 0.15s ease;
@@ -157,18 +164,18 @@
   <label for="rate">Gold rate (per gram)</label>
   <div class="input-wrap">
     <span>₹</span>
-    <input type="number" id="rate" inputmode="decimal">
+    <input type="number" id="rate" inputmode="decimal" enterkeyhint="next" autofocus>
   </div>
 
   <label for="making">Making charge</label>
   <div class="input-wrap">
-    <input type="number" id="making" class="pct" inputmode="decimal">
+    <input type="number" id="making" class="pct" inputmode="decimal" enterkeyhint="next">
     <span style="left:auto; right:14px;">%</span>
   </div>
 
   <label for="grams">Weight</label>
   <div class="input-wrap">
-    <input type="number" id="grams" class="pct" inputmode="decimal">
+    <input type="number" id="grams" class="pct" inputmode="decimal" enterkeyhint="done">
     <span style="left:auto; right:14px;">g</span>
   </div>
 
@@ -193,7 +200,7 @@
     </div>
   </div>
 
-  <div class="footnote">Updates live as you type</div>
+  <div class="footnote">Updates live as you type · <span id="clearBtn" style="text-decoration:underline; cursor:pointer;">Clear</span></div>
 </div>
 
 <script>
@@ -229,6 +236,33 @@
 
   [rateInput, makingInput, gramsInput].forEach(el => {
     el.addEventListener('input', calculate);
+  });
+
+  // Move to next field on Enter, and keep the focused field visible above the keyboard
+  const fieldOrder = [rateInput, makingInput, gramsInput];
+  fieldOrder.forEach((el, idx) => {
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const next = fieldOrder[idx + 1];
+        if (next) {
+          next.focus();
+        } else {
+          el.blur();
+        }
+      }
+    });
+    el.addEventListener('focus', () => {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    fieldOrder.forEach(el => el.value = '');
+    calculate();
+    rateInput.focus();
   });
 
   calculate();
